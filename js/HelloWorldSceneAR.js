@@ -7,7 +7,6 @@ import { ViroARScene, ViroText, ViroConstants, ViroPolyline } from 'react-viro';
 export default class HelloWorldSceneAR extends Component {
   constructor() {
     super();
-
     // Set initial state here
     this.state = {
       x: 0,
@@ -22,13 +21,20 @@ export default class HelloWorldSceneAR extends Component {
   componentDidMount() {
     setInterval(() => {
       this.myRef.current.getCameraOrientationAsync().then(orientation => {
-        this.setState(prevState => ({
-          x: orientation[0].toFixed(2),
-          y: orientation[1].toFixed(2),
-          coords: [...prevState.coords, [prevState.x, prevState.y, -3]],
-        }));
+        this.setState({
+          x: orientation.position[0].toFixed(2),
+          y: orientation.position[1].toFixed(2),
+        });
+        if (orientation.position.length) {
+          this.setState(prevState => ({
+            coords: [
+              ...prevState.coords,
+              [prevState.x * 10, prevState.y * 10, -3],
+            ],
+          }));
+        }
       });
-    }, 100); // 100 ms
+    }, 75); // 100 ms
   }
 
   _onTrackingUpdated(state, reason) {
